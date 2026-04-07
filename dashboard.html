@@ -7,70 +7,146 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --purple: #9146ff;
-            --dark-bg: #0a0a0a;
+            --purple: #bf94ff; /* Slightly lighter for better dark-mode readability */
+            --dark-bg: #000000;
             --card-bg: #1a1a1a;
-            --green: #28a745;
+            --green: #2ecc71;
+            --text-main: #ffffff;
+            --text-dim: #cccccc;
         }
 
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--dark-bg); color: #fff; margin: 0; padding: 20px; 
-            touch-action: pan-y; /* Allows normal scrolling */
+            background: var(--dark-bg); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 30px; 
+            touch-action: pan-y; 
         }
 
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h1 { font-size: 1.1rem; color: var(--purple); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .stats-pill { background: #333; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; }
-        .debug-btn { background: #222; border: 1px solid #444; color: #888; padding: 10px; border-radius: 8px; font-size: 0.75rem; }
+        .header-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 30px; 
+            padding-bottom: 15px;
+            border-bottom: 2px solid #222;
+        }
+        
+        h1 { font-size: 1.8rem; color: var(--purple); margin: 0; text-transform: uppercase; letter-spacing: 3px; }
+        
+        .stats-pill { 
+            background: #333; 
+            padding: 10px 25px; 
+            border-radius: 30px; 
+            font-weight: 900; 
+            font-size: 1.4rem; 
+            color: var(--purple);
+        }
 
-        .queue-container { display: grid; gap: 12px; }
+        .debug-btn { 
+            background: #222; 
+            border: 1px solid #444; 
+            color: #666; 
+            padding: 12px 20px; 
+            border-radius: 10px; 
+            font-size: 1rem; 
+            font-weight: bold;
+        }
+
+        .queue-container { display: grid; gap: 20px; }
 
         .request-card { 
-            background: var(--card-bg); border: 1px solid #333; border-radius: 12px; padding: 12px;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            background: var(--card-bg); 
+            border: 2px solid #333; 
+            border-radius: 18px; 
+            padding: 20px;
+            display: flex; 
+            align-items: center; 
+            gap: 25px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
         }
 
-        /* The Drag Handle */
+        /* Large Drag Handle */
         .drag-handle {
-            width: 40px; height: 50px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: grab; color: #444; font-size: 1.5rem;
+            width: 60px; 
+            height: 80px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: grab; 
+            color: #555; 
+            font-size: 2.5rem;
+            user-select: none;
         }
 
         .song-info { flex: 1; min-width: 0; }
-        .title { font-size: 1.2rem; font-weight: 800; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .artist { color: #aaa; font-size: 1rem; display: block; }
-        .user { color: var(--purple); font-size: 0.8rem; margin-top: 4px; font-weight: bold; }
-
-        .controls { display: flex; gap: 10px; }
-
-        /* Fancy Move to Top Button */
-        .btn-top {
-            background: #2a2a2a; color: var(--purple); border: 2px solid var(--purple); 
-            border-radius: 10px; width: 55px; height: 55px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
+        
+        .title { 
+            font-size: 2.2rem; /* Massive title */
+            font-weight: 900; 
+            display: block; 
+            line-height: 1.1;
+            margin-bottom: 8px;
+            color: #fff;
         }
-        .btn-top svg { width: 24px; height: 24px; fill: currentColor; }
-        .btn-top:active { background: var(--purple); color: white; }
+        
+        .artist { 
+            color: var(--text-dim); 
+            font-size: 1.6rem; /* Large artist name */
+            font-weight: 500;
+            display: block; 
+        }
+        
+        .user { 
+            color: var(--purple); 
+            font-size: 1.2rem; 
+            margin-top: 12px; 
+            display: block; 
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .controls { display: flex; gap: 15px; }
+
+        /* Large Action Buttons */
+        .btn-top {
+            background: #222; 
+            color: var(--purple); 
+            border: 3px solid var(--purple); 
+            border-radius: 15px; 
+            width: 80px; 
+            height: 80px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            cursor: pointer;
+        }
+        .btn-top svg { width: 45px; height: 45px; fill: currentColor; }
 
         .btn-done { 
-            background: var(--green); color: white; border: none; border-radius: 10px; 
-            padding: 0 25px; font-weight: bold; height: 55px; text-transform: uppercase;
+            background: var(--green); 
+            color: #000; /* High contrast black text on green */
+            border: none; 
+            border-radius: 15px; 
+            padding: 0 35px; 
+            font-weight: 900; 
+            font-size: 1.6rem;
+            height: 80px; 
+            text-transform: uppercase;
+            cursor: pointer;
         }
 
-        .empty { text-align: center; color: #444; margin-top: 50px; }
+        .empty { text-align: center; color: #444; margin-top: 100px; font-size: 2rem; font-weight: bold; }
         .sortable-ghost { opacity: 0.1; background: var(--purple); }
     </style>
 </head>
 <body>
 
     <div class="header-row">
-        <button class="debug-btn" onclick="addDebugSongs()">🛠 DEBUG +10</button>
-        <h1>Piano Queue</h1>
-        <div class="stats-pill" id="counter">0 Songs</div>
+        <button class="debug-btn" onclick="addDebugSongs()">DEBUG +10</button>
+        <h1>Piano Requests</h1>
+        <div class="stats-pill" id="counter">0</div>
     </div>
 
     <div id="queue" class="queue-container"></div>
@@ -95,9 +171,9 @@
         const counterEl = document.getElementById('counter');
 
         db.collection("queue").orderBy("order", "asc").onSnapshot(snapshot => {
-            counterEl.innerText = `${snapshot.size} Songs`;
+            counterEl.innerText = snapshot.size;
             if (snapshot.empty) {
-                queueEl.innerHTML = '<div class="empty">Queue is empty</div>';
+                queueEl.innerHTML = '<div class="empty">QUEUE EMPTY</div>';
                 return;
             }
             
@@ -115,7 +191,7 @@
                         <span class="user">👤 ${data.requestedBy}</span>
                     </div>
                     <div class="controls">
-                        <button class="btn-top" onclick="moveToTop('${doc.id}')" title="Move to Top">
+                        <button class="btn-top" onclick="moveToTop('${doc.id}')">
                             <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
                         </button>
                         <button class="btn-done" onclick="markPlayed('${doc.id}')">DONE</button>
@@ -125,9 +201,8 @@
             });
         });
 
-        // Initialize Sortable with Handle
         new Sortable(queueEl, {
-            handle: '.drag-handle', // ONLY drag via the ☰ icon
+            handle: '.drag-handle',
             animation: 200,
             ghostClass: 'sortable-ghost',
             onEnd: reorderAll
@@ -146,8 +221,6 @@
         async function moveToTop(id) {
             const items = Array.from(queueEl.querySelectorAll('.request-card'));
             const targetId = id;
-            
-            // Move target to index 0 in the local array
             const filteredItems = items.filter(el => el.getAttribute('data-id') !== targetId);
             const targetEl = items.find(el => el.getAttribute('data-id') === targetId);
             const newOrder = [targetEl, ...filteredItems];
@@ -167,7 +240,7 @@
         async function addDebugSongs() {
             const songsSnap = await db.collection("songs").limit(50).get();
             const allSongs = songsSnap.docs.map(d => d.data());
-            if (allSongs.length === 0) return alert("Library empty!");
+            if (allSongs.length === 0) return;
             
             const batch = db.batch();
             const baseOrder = Date.now();
