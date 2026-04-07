@@ -10,7 +10,8 @@
             --purple: #a970ff;
             --dark-bg: #0e0e10;
             --card-bg: #18181b;
-            --green: #00f593;
+            --green: #00f593; /* The bright "Played" green */
+            --muted-green: #4da37b; /* The new muted arrow green */
             --red: #eb0400;
             --text-main: #efeff1;
             --text-dim: #adadb8;
@@ -24,14 +25,9 @@
         .stats-pill { background: #26262c; padding: 8px 18px; border-radius: 20px; font-weight: 800; color: var(--purple); border: 1px solid #3f3f46;}
         
         .debug-btn { 
-            background: #1f1f23; 
-            border: 1px solid #3f3f46; 
-            color: #5d5d66; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            font-size: 0.9rem; 
-            font-weight: bold;
-            cursor: pointer;
+            background: #1f1f23; border: 1px solid #3f3f46; color: #5d5d66; 
+            padding: 10px 15px; border-radius: 8px; font-size: 0.9rem; 
+            font-weight: bold; cursor: pointer;
         }
 
         .queue-container { display: grid; gap: 12px; margin-bottom: 40px; }
@@ -49,8 +45,9 @@
         .controls { display: flex; gap: 10px; }
         .btn { width: 60px; height: 60px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; }
         
-        .btn-top { background: #1f1f23; color: var(--purple); border-color: var(--purple); }
-        .btn-top svg { width: 36px; height: 36px; stroke-width: 3; }
+        /* The New Simple Arrow Style */
+        .btn-top { background: #1f1f23; color: var(--muted-green); border-color: #333; }
+        .btn-top svg { width: 32px; height: 32px; stroke-width: 3; }
 
         .btn-played { background: var(--green); color: #000; font-size: 1.8rem; font-weight: 900; }
         .btn-cancel { background: #222; color: var(--red); border-color: #444; font-size: 1.5rem; }
@@ -58,26 +55,14 @@
         .btn:active { transform: scale(0.9); }
         svg { width: 32px; height: 32px; fill: currentColor; }
 
-        /* Clear Queue Styling */
         .footer-controls { padding: 40px 0; text-align: center; border-top: 1px solid #2f2f35; }
         .btn-clear { 
-            background: #1a1a1a; 
-            color: #666; 
-            border: 2px solid #333; 
-            border-radius: 12px; 
-            padding: 20px 40px; 
-            font-size: 1.2rem; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            cursor: pointer;
+            background: #1a1a1a; color: #666; border: 2px solid #333; 
+            border-radius: 12px; padding: 20px 40px; font-size: 1.2rem; 
+            font-weight: 800; text-transform: uppercase; cursor: pointer;
             transition: all 0.3s ease;
         }
-        .btn-clear.confirming {
-            background: var(--red);
-            color: white;
-            border-color: white;
-            transform: scale(1.05);
-        }
+        .btn-clear.confirming { background: var(--red); color: white; border-color: white; transform: scale(1.05); }
 
         .empty { text-align: center; color: #3f3f46; margin-top: 80px; font-size: 1.5rem; font-weight: bold; }
     </style>
@@ -142,7 +127,11 @@
                     </div>
                     <div class="controls">
                         <button class="btn btn-top" onclick="moveToTop('${doc.id}')" title="Move to Top">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="20" x2="12" y2="4"></line>
+                                <line x1="5" y1="11" x2="12" y2="4"></line>
+                                <line x1="19" y1="11" x2="12" y2="4"></line>
+                            </svg>
                         </button>
                         <button class="btn btn-cancel" onclick="resolveRequest('${doc.id}', '${data.songId}', false)">🗑</button>
                         <button class="btn btn-played" onclick="resolveRequest('${doc.id}', '${data.songId}', true)">✔</button>
@@ -167,19 +156,12 @@
 
         async function handleClearQueue() {
             const btn = document.getElementById('clearBtn');
-            
             if (!clearConfirming) {
-                // First Stage
                 clearConfirming = true;
                 btn.innerText = "ARE YOU SURE?";
                 btn.classList.add('confirming');
-                
-                // Reset after 3 seconds if no second click
-                clearTimer = setTimeout(() => {
-                    resetClearButton();
-                }, 3000);
+                clearTimer = setTimeout(() => { resetClearButton(); }, 3000);
             } else {
-                // Second Stage (Execute)
                 clearTimeout(clearTimer);
                 const snapshot = await db.collection("queue").get();
                 const batch = db.batch();
@@ -222,23 +204,16 @@
             const songsSnap = await db.collection("songs").limit(50).get();
             const allSongs = songsSnap.docs.map(d => ({id: d.id, ...d.data()}));
             if (allSongs.length === 0) return;
-            
             const batch = db.batch();
             const lastSnap = await db.collection('queue').orderBy('order', 'desc').limit(1).get();
             let startOrder = lastSnap.empty ? 0 : lastSnap.docs[0].data().order + 1;
-
             for(let i=0; i<10; i++) {
                 const randomSong = allSongs[Math.floor(Math.random() * allSongs.length)];
                 const ref = db.collection("queue").doc();
                 batch.set(ref, {
-                    songId: randomSong.id,
-                    title: randomSong.title,
-                    artist: randomSong.artist,
-                    requestedBy: "DebugBot",
-                    status: "pending",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    order: startOrder + i,
-                    timesPlayed: randomSong.timesPlayed || 0
+                    songId: randomSong.id, title: randomSong.title, artist: randomSong.artist,
+                    requestedBy: "DebugBot", status: "pending", timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    order: startOrder + i, timesPlayed: randomSong.timesPlayed || 0
                 });
             }
             await batch.commit();
