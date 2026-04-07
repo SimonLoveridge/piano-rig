@@ -3,24 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Piano Dashboard Pro</title>
+    <title>Piano Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         :root {
-            --purple: #bf94ff; /* Slightly lighter for better dark-mode readability */
-            --dark-bg: #000000;
-            --card-bg: #1a1a1a;
-            --green: #2ecc71;
-            --text-main: #ffffff;
-            --text-dim: #cccccc;
+            --purple: #a970ff;
+            --dark-bg: #0e0e10; /* Twitch-style dark gray/black */
+            --card-bg: #18181b;
+            --green: #00f593;
+            --text-main: #efeff1;
+            --text-dim: #adadb8;
         }
 
         body { 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
             background: var(--dark-bg); 
             color: var(--text-main); 
             margin: 0; 
-            padding: 30px; 
+            padding: 20px; 
             touch-action: pan-y; 
         }
 
@@ -28,116 +28,118 @@
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
-            margin-bottom: 30px; 
-            padding-bottom: 15px;
-            border-bottom: 2px solid #222;
+            margin-bottom: 20px; 
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2f2f35;
         }
         
-        h1 { font-size: 1.8rem; color: var(--purple); margin: 0; text-transform: uppercase; letter-spacing: 3px; }
+        h1 { font-size: 1.4rem; color: var(--purple); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
         
         .stats-pill { 
-            background: #333; 
-            padding: 10px 25px; 
-            border-radius: 30px; 
-            font-weight: 900; 
-            font-size: 1.4rem; 
+            background: #26262c; 
+            padding: 8px 18px; 
+            border-radius: 20px; 
+            font-weight: 800; 
+            font-size: 1.1rem; 
             color: var(--purple);
+            border: 1px solid #3f3f46;
         }
 
         .debug-btn { 
-            background: #222; 
-            border: 1px solid #444; 
-            color: #666; 
-            padding: 12px 20px; 
-            border-radius: 10px; 
-            font-size: 1rem; 
+            background: #1f1f23; 
+            border: 1px solid #3f3f46; 
+            color: #5d5d66; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            font-size: 0.9rem; 
             font-weight: bold;
         }
 
-        .queue-container { display: grid; gap: 20px; }
+        .queue-container { display: grid; gap: 12px; }
 
         .request-card { 
             background: var(--card-bg); 
-            border: 2px solid #333; 
-            border-radius: 18px; 
-            padding: 20px;
+            border: 1px solid #2f2f35; 
+            border-radius: 12px; 
+            padding: 15px;
             display: flex; 
             align-items: center; 
-            gap: 25px;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.6);
+            gap: 18px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
         }
 
-        /* Large Drag Handle */
         .drag-handle {
-            width: 60px; 
-            height: 80px;
+            width: 45px; 
+            height: 60px;
             display: flex; 
             align-items: center; 
             justify-content: center;
             cursor: grab; 
-            color: #555; 
-            font-size: 2.5rem;
+            color: #3f3f46; 
+            font-size: 1.8rem;
             user-select: none;
         }
 
         .song-info { flex: 1; min-width: 0; }
         
         .title { 
-            font-size: 2.2rem; /* Massive title */
-            font-weight: 900; 
+            font-size: 1.6rem; 
+            font-weight: 800; 
             display: block; 
-            line-height: 1.1;
-            margin-bottom: 8px;
-            color: #fff;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .artist { 
             color: var(--text-dim); 
-            font-size: 1.6rem; /* Large artist name */
+            font-size: 1.2rem; 
             font-weight: 500;
             display: block; 
         }
         
         .user { 
             color: var(--purple); 
-            font-size: 1.2rem; 
-            margin-top: 12px; 
+            font-size: 0.9rem; 
+            margin-top: 8px; 
             display: block; 
-            font-weight: 800;
+            font-weight: 700;
             text-transform: uppercase;
         }
 
-        .controls { display: flex; gap: 15px; }
+        .controls { display: flex; gap: 12px; }
 
-        /* Large Action Buttons */
         .btn-top {
-            background: #222; 
+            background: #1f1f23; 
             color: var(--purple); 
-            border: 3px solid var(--purple); 
-            border-radius: 15px; 
-            width: 80px; 
-            height: 80px;
+            border: 2px solid var(--purple); 
+            border-radius: 10px; 
+            width: 65px; 
+            height: 65px;
             display: flex; 
             align-items: center; 
             justify-content: center;
             cursor: pointer;
         }
-        .btn-top svg { width: 45px; height: 45px; fill: currentColor; }
+        .btn-top svg { width: 32px; height: 32px; fill: currentColor; }
 
         .btn-done { 
             background: var(--green); 
-            color: #000; /* High contrast black text on green */
+            color: #000; 
             border: none; 
-            border-radius: 15px; 
-            padding: 0 35px; 
-            font-weight: 900; 
-            font-size: 1.6rem;
-            height: 80px; 
+            border-radius: 10px; 
+            padding: 0 25px; 
+            font-weight: 800; 
+            font-size: 1.3rem;
+            height: 65px; 
             text-transform: uppercase;
             cursor: pointer;
         }
 
-        .empty { text-align: center; color: #444; margin-top: 100px; font-size: 2rem; font-weight: bold; }
+        .empty { text-align: center; color: #3f3f46; margin-top: 80px; font-size: 1.5rem; font-weight: bold; }
         .sortable-ghost { opacity: 0.1; background: var(--purple); }
     </style>
 </head>
@@ -223,8 +225,9 @@
             const targetId = id;
             const filteredItems = items.filter(el => el.getAttribute('data-id') !== targetId);
             const targetEl = items.find(el => el.getAttribute('data-id') === targetId);
+            if (!targetEl) return;
+            
             const newOrder = [targetEl, ...filteredItems];
-
             const batch = db.batch();
             newOrder.forEach((el, index) => {
                 const ref = db.collection("queue").doc(el.getAttribute('data-id'));
@@ -243,7 +246,9 @@
             if (allSongs.length === 0) return;
             
             const batch = db.batch();
-            const baseOrder = Date.now();
+            const lastSnap = await db.collection('queue').orderBy('order', 'desc').limit(1).get();
+            let startOrder = lastSnap.empty ? 0 : lastSnap.docs[0].data().order + 1;
+
             for(let i=0; i<10; i++) {
                 const randomSong = allSongs[Math.floor(Math.random() * allSongs.length)];
                 const ref = db.collection("queue").doc();
@@ -253,7 +258,7 @@
                     requestedBy: "DebugBot",
                     status: "pending",
                     timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    order: baseOrder + i
+                    order: startOrder + i
                 });
             }
             await batch.commit();
