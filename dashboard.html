@@ -8,145 +8,46 @@
     <style>
         :root {
             --purple: #a970ff;
-            --dark-bg: #0e0e10; /* Twitch-style dark gray/black */
+            --dark-bg: #0e0e10;
             --card-bg: #18181b;
             --green: #00f593;
+            --red: #eb0400;
             --text-main: #efeff1;
             --text-dim: #adadb8;
         }
 
-        body { 
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: var(--dark-bg); 
-            color: var(--text-main); 
-            margin: 0; 
-            padding: 20px; 
-            touch-action: pan-y; 
-        }
-
-        .header-row { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px;
-            border-bottom: 1px solid #2f2f35;
-        }
+        body { font-family: Inter, sans-serif; background: var(--dark-bg); color: var(--text-main); margin: 0; padding: 20px; touch-action: pan-y; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #2f2f35; padding-bottom: 10px;}
+        h1 { font-size: 1.4rem; color: var(--purple); text-transform: uppercase; letter-spacing: 2px; }
+        .stats-pill { background: #26262c; padding: 8px 18px; border-radius: 20px; font-weight: 800; color: var(--purple); border: 1px solid #3f3f46;}
         
-        h1 { font-size: 1.4rem; color: var(--purple); margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .stats-pill { 
-            background: #26262c; 
-            padding: 8px 18px; 
-            border-radius: 20px; 
-            font-weight: 800; 
-            font-size: 1.1rem; 
-            color: var(--purple);
-            border: 1px solid #3f3f46;
-        }
-
-        .debug-btn { 
-            background: #1f1f23; 
-            border: 1px solid #3f3f46; 
-            color: #5d5d66; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            font-size: 0.9rem; 
-            font-weight: bold;
-        }
-
         .queue-container { display: grid; gap: 12px; }
-
-        .request-card { 
-            background: var(--card-bg); 
-            border: 1px solid #2f2f35; 
-            border-radius: 12px; 
-            padding: 15px;
-            display: flex; 
-            align-items: center; 
-            gap: 18px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-
-        .drag-handle {
-            width: 45px; 
-            height: 60px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            cursor: grab; 
-            color: #3f3f46; 
-            font-size: 1.8rem;
-            user-select: none;
-        }
-
+        .request-card { background: var(--card-bg); border: 1px solid #2f2f35; border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 18px; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        
+        .drag-handle { width: 35px; cursor: grab; color: #3f3f46; font-size: 1.8rem; user-select: none; }
         .song-info { flex: 1; min-width: 0; }
+        .title { font-size: 1.5rem; font-weight: 800; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+        .artist { color: var(--text-dim); font-size: 1.1rem; display: block; }
         
-        .title { 
-            font-size: 1.6rem; 
-            font-weight: 800; 
-            display: block; 
-            line-height: 1.2;
-            margin-bottom: 4px;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
+        .meta-row { display: flex; gap: 15px; margin-top: 8px; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; }
+        .user { color: var(--purple); }
+        .plays { color: #5d5d66; }
+
+        .controls { display: flex; gap: 10px; }
+        .btn { width: 60px; height: 60px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; }
         
-        .artist { 
-            color: var(--text-dim); 
-            font-size: 1.2rem; 
-            font-weight: 500;
-            display: block; 
-        }
-        
-        .user { 
-            color: var(--purple); 
-            font-size: 0.9rem; 
-            margin-top: 8px; 
-            display: block; 
-            font-weight: 700;
-            text-transform: uppercase;
-        }
+        .btn-top { background: #1f1f23; color: var(--purple); border-color: var(--purple); }
+        .btn-played { background: var(--green); color: #000; font-size: 1.8rem; font-weight: 900; }
+        .btn-cancel { background: #222; color: var(--red); border-color: #444; font-size: 1.5rem; }
 
-        .controls { display: flex; gap: 12px; }
-
-        .btn-top {
-            background: #1f1f23; 
-            color: var(--purple); 
-            border: 2px solid var(--purple); 
-            border-radius: 10px; 
-            width: 65px; 
-            height: 65px;
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            cursor: pointer;
-        }
-        .btn-top svg { width: 32px; height: 32px; fill: currentColor; }
-
-        .btn-done { 
-            background: var(--green); 
-            color: #000; 
-            border: none; 
-            border-radius: 10px; 
-            padding: 0 25px; 
-            font-weight: 800; 
-            font-size: 1.3rem;
-            height: 65px; 
-            text-transform: uppercase;
-            cursor: pointer;
-        }
-
+        .btn:active { transform: scale(0.9); }
+        svg { width: 32px; height: 32px; fill: currentColor; }
         .empty { text-align: center; color: #3f3f46; margin-top: 80px; font-size: 1.5rem; font-weight: bold; }
-        .sortable-ghost { opacity: 0.1; background: var(--purple); }
     </style>
 </head>
 <body>
 
     <div class="header-row">
-        <button class="debug-btn" onclick="addDebugSongs()">DEBUG +10</button>
         <h1>Piano Requests</h1>
         <div class="stats-pill" id="counter">0</div>
     </div>
@@ -160,26 +61,17 @@
         const firebaseConfig = {
             apiKey: "AIzaSyBwveJdmibNz9N2oKuV9rXYLEoPS1kJEBs",
             authDomain: "pianorequests.firebaseapp.com",
-            databaseURL: "https://pianorequests-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "pianorequests",
-            storageBucket: "pianorequests.firebasestorage.app",
-            messagingSenderId: "873466938525",
             appId: "1:873466938525:web:24bf27361c0844de5b8074"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const queueEl = document.getElementById('queue');
-        const counterEl = document.getElementById('counter');
 
         db.collection("queue").orderBy("order", "asc").onSnapshot(snapshot => {
-            counterEl.innerText = snapshot.size;
-            if (snapshot.empty) {
-                queueEl.innerHTML = '<div class="empty">QUEUE EMPTY</div>';
-                return;
-            }
+            document.getElementById('counter').innerText = snapshot.size;
+            const container = document.getElementById('queue');
+            container.innerHTML = snapshot.empty ? '<div class="empty">QUEUE EMPTY</div>' : "";
             
-            queueEl.innerHTML = "";
             snapshot.forEach(doc => {
                 const data = doc.data();
                 const div = document.createElement('div');
@@ -190,79 +82,57 @@
                     <div class="song-info">
                         <span class="title">${data.title}</span>
                         <span class="artist">${data.artist}</span>
-                        <span class="user">👤 ${data.requestedBy}</span>
+                        <div class="meta-row">
+                            <span class="user">👤 ${data.requestedBy}</span>
+                            <span class="plays">📈 Plays: ${data.timesPlayed || 0}</span>
+                        </div>
                     </div>
                     <div class="controls">
-                        <button class="btn-top" onclick="moveToTop('${doc.id}')">
+                        <button class="btn btn-top" onclick="moveToTop('${doc.id}')" title="Move to Top">
                             <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
                         </button>
-                        <button class="btn-done" onclick="markPlayed('${doc.id}')">DONE</button>
+                        <button class="btn btn-played" onclick="resolveRequest('${doc.id}', '${data.songId}', true)">✔</button>
+                        <button class="btn btn-cancel" onclick="resolveRequest('${doc.id}', '${data.songId}', false)">🗑</button>
                     </div>
                 `;
-                queueEl.appendChild(div);
+                container.appendChild(div);
             });
         });
 
-        new Sortable(queueEl, {
-            handle: '.drag-handle',
-            animation: 200,
-            ghostClass: 'sortable-ghost',
-            onEnd: reorderAll
-        });
-
-        async function reorderAll() {
-            const items = Array.from(queueEl.querySelectorAll('.request-card'));
+        async function resolveRequest(queueId, songId, wasPlayed) {
             const batch = db.batch();
-            items.forEach((el, index) => {
-                const ref = db.collection("queue").doc(el.getAttribute('data-id'));
-                batch.update(ref, { order: index });
-            });
-            await batch.commit();
-        }
-
-        async function moveToTop(id) {
-            const items = Array.from(queueEl.querySelectorAll('.request-card'));
-            const targetId = id;
-            const filteredItems = items.filter(el => el.getAttribute('data-id') !== targetId);
-            const targetEl = items.find(el => el.getAttribute('data-id') === targetId);
-            if (!targetEl) return;
+            batch.delete(db.collection("queue").doc(queueId));
             
-            const newOrder = [targetEl, ...filteredItems];
-            const batch = db.batch();
-            newOrder.forEach((el, index) => {
-                const ref = db.collection("queue").doc(el.getAttribute('data-id'));
-                batch.update(ref, { order: index });
-            });
-            await batch.commit();
-        }
-
-        async function markPlayed(id) {
-            await db.collection("queue").doc(id).delete();
-        }
-
-        async function addDebugSongs() {
-            const songsSnap = await db.collection("songs").limit(50).get();
-            const allSongs = songsSnap.docs.map(d => d.data());
-            if (allSongs.length === 0) return;
-            
-            const batch = db.batch();
-            const lastSnap = await db.collection('queue').orderBy('order', 'desc').limit(1).get();
-            let startOrder = lastSnap.empty ? 0 : lastSnap.docs[0].data().order + 1;
-
-            for(let i=0; i<10; i++) {
-                const randomSong = allSongs[Math.floor(Math.random() * allSongs.length)];
-                const ref = db.collection("queue").doc();
-                batch.set(ref, {
-                    title: randomSong.title,
-                    artist: randomSong.artist,
-                    requestedBy: "DebugBot",
-                    status: "pending",
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                    order: startOrder + i
+            if (wasPlayed && songId) {
+                const songRef = db.collection("songs").doc(songId);
+                batch.update(songRef, { 
+                    timesPlayed: firebase.firestore.FieldValue.increment(1) 
                 });
             }
             await batch.commit();
         }
+
+        async function moveToTop(id) {
+            const snap = await db.collection("queue").orderBy("order", "asc").get();
+            const docs = snap.docs;
+            const target = docs.find(d => d.id === id);
+            const others = docs.filter(d => d.id !== id);
+            const newOrder = [target, ...others];
+            const batch = db.batch();
+            newOrder.forEach((d, i) => batch.update(d.ref, { order: i }));
+            await batch.commit();
+        }
+
+        new Sortable(document.getElementById('queue'), { 
+            handle: '.drag-handle', 
+            animation: 200, 
+            onEnd: async () => {
+                const items = Array.from(document.querySelectorAll('.request-card'));
+                const batch = db.batch();
+                items.forEach((el, i) => batch.update(db.collection("queue").doc(el.dataset.id), { order: i }));
+                await batch.commit();
+            }
+        });
     </script>
 </body>
 </html>
