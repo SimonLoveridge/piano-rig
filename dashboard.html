@@ -36,7 +36,10 @@
         .controls { display: flex; gap: 10px; }
         .btn { width: 60px; height: 60px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; transition: 0.1s; }
         
+        /* Explicit Arrow Up Style */
         .btn-top { background: #1f1f23; color: var(--purple); border-color: var(--purple); }
+        .btn-top svg { width: 36px; height: 36px; stroke-width: 3; }
+
         .btn-played { background: var(--green); color: #000; font-size: 1.8rem; font-weight: 900; }
         .btn-cancel { background: #222; color: var(--red); border-color: #444; font-size: 1.5rem; }
 
@@ -89,10 +92,10 @@
                     </div>
                     <div class="controls">
                         <button class="btn btn-top" onclick="moveToTop('${doc.id}')" title="Move to Top">
-                            <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5H7z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
                         </button>
-                        <button class="btn btn-played" onclick="resolveRequest('${doc.id}', '${data.songId}', true)">✔</button>
                         <button class="btn btn-cancel" onclick="resolveRequest('${doc.id}', '${data.songId}', false)">🗑</button>
+                        <button class="btn btn-played" onclick="resolveRequest('${doc.id}', '${data.songId}', true)">✔</button>
                     </div>
                 `;
                 container.appendChild(div);
